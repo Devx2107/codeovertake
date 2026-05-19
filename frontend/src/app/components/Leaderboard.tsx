@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { Search, Rocket, Zap, TrendingUp, ArrowUpRight, Loader2, ArrowUpDown, ArrowUp, ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import { platforms, type Platform } from "../mockData";
 import { fetchLeaderboard, fetchPlatformLeaderboard, fetchFilters, fetchTopGainers } from "../api";
@@ -39,12 +39,18 @@ const platformColumns: Record<string, { label: string; statKey: string; getValue
 type TabType = "all" | Platform;
 
 export function Leaderboard() {
-  const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Initialize state from URL search params
+  const [activeTab, setActiveTab] = useState<TabType>(() => (searchParams.get("tab") as TabType) || "all");
   // displayTab tracks which tab's columns to render — updated after data arrives
-  const [displayTab, setDisplayTab] = useState<TabType>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
-  const [selectedBranch, setSelectedBranch] = useState<string>("all");
+  const [displayTab, setDisplayTab] = useState<TabType>(() => (searchParams.get("tab") as TabType) || "all");
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "");
+  const [selectedYear, setSelectedYear] = useState<number | "all">(() => {
+    const y = searchParams.get("year");
+    return y ? Number(y) : "all";
+  });
+  const [selectedBranch, setSelectedBranch] = useState<string>(() => searchParams.get("branch") || "all");
   const [currentPage, setCurrentPage] = useState(1);
   const [students, setStudents] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -59,9 +65,21 @@ export function Leaderboard() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [topGainers, setTopGainers] = useState<any[]>([]);
   const [gainersPeriod, setGainersPeriod] = useState<{ from: string; to: string } | null>(null);
-  const [sortBy, setSortBy] = useState<string | undefined>(undefined);
-  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
+  const [sortBy, setSortBy] = useState<string | undefined>(() => searchParams.get("sortBy") || undefined);
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">(() => (searchParams.get("order") as "desc" | "asc") || "desc");
   const [gainersCollapsed, setGainersCollapsed] = useState(true);
+
+  // Sync filter state to URL search params
+  useEffect(() => {
+    const params: Record<string, string> = {};
+    if (activeTab !== "all") params.tab = activeTab;
+    if (searchQuery) params.search = searchQuery;
+    if (selectedYear !== "all") params.year = String(selectedYear);
+    if (selectedBranch !== "all") params.branch = selectedBranch;
+    if (sortBy) params.sortBy = sortBy;
+    if (sortOrder !== "desc") params.order = sortOrder;
+    setSearchParams(params, { replace: true });
+  }, [activeTab, searchQuery, selectedYear, selectedBranch, sortBy, sortOrder]);
 
   // Load filter options and top gainers once
   useEffect(() => {
