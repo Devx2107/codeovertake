@@ -194,7 +194,7 @@ async function getHistoricalLeaderboard(dateStr, { year, branch, sortBy = 'total
 /**
  * Get top score gainers by comparing latest two snapshots.
  */
-async function getTopGainers(limit = 10) {
+async function getTopGainers({ limit = 50, page = 1, search, branch, year } = {}) {
   // Find the two most recent distinct snapshot dates
   const dates = await Snapshot.aggregate([
     { $group: { _id: '$date' } },
@@ -205,6 +205,9 @@ async function getTopGainers(limit = 10) {
   if (dates.length < 2) return { gainers: [], dates: [] };
 
   const [latestDate, prevDate] = [dates[0]._id, dates[1]._id];
+
+  const skip = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
+  const lim = Math.min(100, Math.max(1, parseInt(limit)));
 
   const pipeline = [
     { $match: { date: { $in: [latestDate, prevDate] } } },
@@ -253,24 +256,57 @@ async function getTopGainers(limit = 10) {
         as: 'student',
       },
     },
-    { $unwind: '$student' },
-    {
-      $project: {
-        rollno: 1,
-        gain: 1,
-        currentScore: 1,
-        previousScore: 1,
-        name: '$student.name',
-        branch: '$student.branch',
-        year: '$student.year',
-      },
-    },
+    { $unwind: '$student' }
   ];
 
-  const gainers = await Snapshot.aggregate(pipeline);
+  // Add Branch and Year Filters
+  if (year) pipeline.push({ $match: { 'student.year': parseInt(year) } });
+  if (branch && branch !== 'All Branches') {
+    pipeline.push({ $match: { 'student.branch': branch.toUpperCase() } });
+  }
+
+  // Add Search Filter
+  if (search) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { 'student.name': { $regex: search, $options: 'i' } },
+          { rollno: { $regex: search, $options: 'i' } },
+        ],
+      },
+    });
+  }
+
+  // Sort by highest gain after filtering
+// 4. Use $facet to split data (Page Results) and metadata (Total Count)
+  pipeline.push({
+    $facet: {
+      metadata: [{ $count: 'total' }],
+      data: [
+        { $skip: skip },
+        { $limit: lim },
+        {
+          $project: {
+            rollno: 1,
+            gain: 1,
+            currentScore: 1,
+            previousScore: 1,
+            name: '$student.name',
+            branch: '$student.branch',
+            year: '$student.year',
+          },
+        },
+      ],
+    },
+  });
+
+  const result = await Snapshot.aggregate(pipeline);
+  const gainers = result[0].data;
+  const total = result[0].metadata.length > 0 ? result[0].metadata[0].total : 0;
 
   return {
     gainers,
+    pagination: { page: parseInt(page), limit: lim, total, pages: Math.ceil(total / lim) },
     period: {
       from: prevDate.toISOString().split('T')[0],
       to: latestDate.toISOString().split('T')[0],

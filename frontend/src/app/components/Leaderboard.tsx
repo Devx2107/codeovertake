@@ -63,11 +63,9 @@ export function Leaderboard() {
   const [platformMeta, setPlatformMeta] = useState<any[]>([]);
   const fetchIdRef = useRef(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const [topGainers, setTopGainers] = useState<any[]>([]);
   const [gainersPeriod, setGainersPeriod] = useState<{ from: string; to: string } | null>(null);
   const [sortBy, setSortBy] = useState<string | undefined>(() => searchParams.get("sortBy") || undefined);
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">(() => (searchParams.get("order") as "desc" | "asc") || "desc");
-  const [gainersCollapsed, setGainersCollapsed] = useState(true);
 
   // Sync filter state to URL search params
   useEffect(() => {
@@ -81,15 +79,15 @@ export function Leaderboard() {
     setSearchParams(params, { replace: true });
   }, [activeTab, searchQuery, selectedYear, selectedBranch, sortBy, sortOrder]);
 
-  // Load filter options and top gainers once
+  // Load filter options and a top gainer once
   useEffect(() => {
     fetchFilters().then((data) => {
       setFilterYears(data.years);
       setFilterBranches(data.branches);
       setPlatformMeta(data.platforms);
     }).catch(() => {});
-    fetchTopGainers(5).then((data) => {
-      setTopGainers(data.gainers);
+
+    fetchTopGainers(1).then((data) => {
       setGainersPeriod(data.period);
     }).catch(() => {});
   }, []);
@@ -257,54 +255,31 @@ export function Leaderboard() {
         </Link>
       </div>
 
-      {/* Top Gainers */}
-      {topGainers.length > 0 && (
-        <div className="mb-6 sm:mb-8">
-          <button
-            type="button"
-            onClick={() => setGainersCollapsed((prev) => !prev)}
-            className="mb-3 flex w-full items-center gap-2 text-left"
-            aria-expanded={!gainersCollapsed}
-            aria-controls="top-gainers-grid"
-          >
-            <TrendingUp className="h-4 w-4 text-[#4ade80]" />
-            <h2 className="font-['JetBrains_Mono'] text-sm uppercase tracking-wider text-[#888888]">Top Gainers</h2>
+      {/* Daily Gainers CTA Banner */}
+      <div className="mb-6 flex items-center justify-between rounded border border-[#1e1e1e] bg-[#111111] p-3 sm:mb-8 sm:p-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <TrendingUp className="h-4 w-4 text-[#4ade80] sm:h-5 sm:w-5" />
+          <div>
+            <h2 className="font-['JetBrains_Mono'] text-xs uppercase tracking-wider text-[#888888] sm:text-sm">
+              Daily Gainers
+            </h2>
             {gainersPeriod && (
-              <span className="text-xs text-[#666666]">
+              <div className="mt-0.5 text-[10px] text-[#666666] sm:text-xs">
                 {gainersPeriod.from} → {gainersPeriod.to}
-              </span>
+              </div>
             )}
-            {gainersCollapsed ? (
-              <ChevronDown className="ml-auto h-4 w-4 text-[#888888]" />
-            ) : (
-              <ChevronUp className="ml-auto h-4 w-4 text-[#888888]" />
-            )}
-          </button>
-          {!gainersCollapsed && (
-            <div id="top-gainers-grid" className="grid gap-2 sm:grid-cols-5">
-              {topGainers.map((g, i) => (
-                <Link
-                  key={g.rollno}
-                  to={`/student/${g.rollno}`}
-                  className="flex items-center gap-3 rounded border border-[#1e1e1e] bg-[#111111] p-3 transition-colors hover:border-[#333333]"
-                >
-                  <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-[#1e1e1e] font-['JetBrains_Mono'] text-xs text-[#888888]">
-                    {i + 1}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm">{g.name}</div>
-                    <div className="font-['JetBrains_Mono'] text-xs text-[#666666]">{g.rollno}</div>
-                  </div>
-                  <div className="flex items-center gap-1 font-['JetBrains_Mono'] text-sm text-[#4ade80]">
-                    <ArrowUpRight className="h-3 w-3" />
-                    +{g.gain}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          </div>
         </div>
-      )}
+        
+        <Link
+          to="/daily-gainers"
+          className="flex flex-shrink-0 items-center justify-center rounded border border-[#333333] bg-[#1a1a1a] px-3 py-1.5 font-['Archivo'] text-xs text-white transition-colors hover:border-[#4ade80] hover:text-[#4ade80] sm:px-4 sm:py-2 sm:text-sm"
+        >
+          <span className="sm:hidden">View</span>
+          <span className="hidden sm:inline">View Full List</span>
+          <span className="ml-1">→</span>
+        </Link>
+      </div>
 
       {/* Page Title */}
       <h1 className="mb-6 font-['JetBrains_Mono'] text-2xl tracking-tight sm:mb-8 sm:text-3xl">
