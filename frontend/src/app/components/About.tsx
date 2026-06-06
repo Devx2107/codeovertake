@@ -1,7 +1,34 @@
-import { Code2, Globe, Linkedin, Github, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Code2, Globe, Linkedin, Github, Mail, Users } from "lucide-react";
 import { Link } from "react-router";
+import { fetchContributors } from "../api";
+
+interface Contributor {
+  id: number;
+  login: string;
+  avatar_url: string;
+  html_url: string;
+  contributions: number;
+}
 
 export function About() {
+  const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadContributors() {
+      try {
+        const data = await fetchContributors();
+        setContributors(data);
+      } catch (err) {
+        console.error("Failed to load contributors:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadContributors();
+  }, []);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8">
       {/* Hero */}
@@ -139,6 +166,42 @@ export function About() {
           <p className="text-xs text-[#666666]">Rankings are recalculated after every data refresh. Daily snapshots track your score history over time.</p>
         </div>
       </section>
+      
+      {/* Divider */}
+      <div className="my-14 border-t border-[#1e1e1e]" />
+
+      {/* Contributors*/}
+      {!loading && contributors.length > 0 && (
+        <section className="mb-14">
+          <div className="mb-6 flex items-center gap-2">
+            <Users className="h-5 w-5 text-[#4ade80]" strokeWidth={1.5} />
+            <h2 className="font-['JetBrains_Mono'] text-lg tracking-tight sm:text-xl">Project Contributors</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+            {contributors.map((user) => (
+              <a
+                key={user.id}
+                href={user.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center rounded-lg border border-[#1e1e1e] bg-[#111111] p-4 text-center transition-colors hover:border-[#4ade80]"
+              >
+                <img
+                  src={user.avatar_url}
+                  alt={`${user.login}'s profile`}
+                  className="mb-3 h-14 w-14 rounded-full border border-[#1e1e1e] bg-[#1a1a1a]"
+                />
+                <span className="truncate max-w-full font-['JetBrains_Mono'] text-sm font-medium text-white">
+                  {user.login}
+                </span>
+                <span className="mt-1 font-['Archivo'] text-xs text-[#666666]">
+                  {user.contributions} {user.contributions === 1 ? 'commit' : 'commits'}
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Divider */}
       <div className="my-14 border-t border-[#1e1e1e]" />

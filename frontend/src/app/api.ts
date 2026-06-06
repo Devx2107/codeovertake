@@ -289,3 +289,14 @@ export async function fetchStudentResults(rollno: string): Promise<StudentResult
     return null;
   }
 }
+
+// ---- Contributors ----
+
+export const fetchContributors = async () => {
+  try {
+    return await request<any[]>("/contributors");
+  } catch (error) {
+    console.error("Failed to fetch contributors:", error);
+    return [];
+  }
+};
