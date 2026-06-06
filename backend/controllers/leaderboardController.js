@@ -16,8 +16,7 @@ const getHistoricalLeaderboard = async (req, res) => {
 };
 
 const getTopGainers = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 10;
-  const result = await leaderboardService.getTopGainers(limit);
+  const result = await leaderboardService.getTopGainers(req.query);
   res.json(result);
 };
 

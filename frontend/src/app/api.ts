@@ -55,7 +55,16 @@ export async function fetchPlatformLeaderboard(platform: string, params: Leaderb
   );
 }
 
-export async function fetchTopGainers(limit = 10) {
+export async function fetchTopGainers(params: LeaderboardQuery = {}) {
+  const qs = new URLSearchParams();
+  
+  if (params.year) qs.set("year", String(params.year));
+  if (params.branch) qs.set("branch", params.branch);
+  if (params.search) qs.set("search", params.search);
+  if (params.page) qs.set("page", String(params.page));
+
+  qs.set("limit", String(params.limit || 50));
+
   return request<{
     gainers: Array<{
       rollno: string;
@@ -66,8 +75,9 @@ export async function fetchTopGainers(limit = 10) {
       currentScore: number;
       previousScore: number;
     }>;
+    pagination: { page: number; limit: number; total: number; pages: number };
     period: { from: string; to: string };
-  }>(`/leaderboard/top-gainers?limit=${limit}`);
+  }>(`/leaderboard/top-gainers?${qs}`);
 }
 
 export async function fetchFilters() {
