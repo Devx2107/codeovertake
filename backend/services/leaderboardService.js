@@ -206,8 +206,10 @@ async function getTopGainers({ limit = 50, page = 1, search, branch, year } = {}
 
   const [latestDate, prevDate] = [dates[0]._id, dates[1]._id];
 
-  const skip = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
-  const lim = Math.min(100, Math.max(1, parseInt(limit)));
+  const pageNum = Number.isFinite(Number(page)) ? Math.max(1, parseInt(page, 10)) : 1;
+  const reqLimit = Number.isFinite(Number(limit)) ? parseInt(limit, 10) : 50;
+  const lim = Math.min(100, Math.max(1, reqLimit));
+  const skip = (pageNum - 1) * lim;
 
   const pipeline = [
     { $match: { date: { $in: [latestDate, prevDate] } } },
@@ -261,8 +263,8 @@ async function getTopGainers({ limit = 50, page = 1, search, branch, year } = {}
 
   // Add Branch and Year Filters
   if (year) pipeline.push({ $match: { 'student.year': parseInt(year) } });
-  if (branch && branch !== 'All Branches') {
-    pipeline.push({ $match: { 'student.branch': branch.toUpperCase() } });
+  if (branch && !["all", "All Branches"].includes(branch)) {
+    pipeline.push({ $match: { 'student.branch': String(branch).toUpperCase() } });
   }
 
   // Add Search Filter

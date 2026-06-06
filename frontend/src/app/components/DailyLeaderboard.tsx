@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useSearchParams } from "react-router";
-import { Search, Rocket, Zap, Loader2, ArrowUpRight } from "lucide-react";
+import { Search, Loader2, ArrowUpRight } from "lucide-react";
 import { fetchFilters, fetchTopGainers } from "../api";
 
 const ITEMS_PER_PAGE = 20;
@@ -17,7 +17,7 @@ export function DailyLeaderboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [students, setStudents] = useState<any[]>([]);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+  const [, setTotalCount] = useState(0);
   const [initialLoad, setInitialLoad] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [filterYears, setFilterYears] = useState<number[]>([]);

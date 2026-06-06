@@ -87,7 +87,7 @@ export function Leaderboard() {
       setPlatformMeta(data.platforms);
     }).catch(() => {});
 
-    fetchTopGainers(1).then((data) => {
+    fetchTopGainers({ limit: 1 }).then((data) => {
       setGainersPeriod(data.period);
     }).catch(() => {});
   }, []);
