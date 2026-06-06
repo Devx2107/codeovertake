@@ -7,6 +7,7 @@ const studentRoutes = require('./routes/students');
 const leaderboardRoutes = require('./routes/leaderboard');
 const adminRoutes = require('./routes/admin');
 const analyticsRoutes = require('./routes/analytics');
+const contributorRoutes = require('./routes/contributors');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/students', studentRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/contributors', contributorRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
