@@ -1,10 +1,10 @@
 # CodeOvertake
 
-A unified coding leaderboard for NSUT students. Tracks and ranks profiles across **GitHub**, **LeetCode**, **Codeforces**, and **CodeChef** — scores update daily from live platform data.
+A unified coding leaderboard for NSUT students. Tracks and ranks profiles across **GitHub**, **LeetCode**, **Codeforces** , **CodeChef** , and **GeeksForGeeks** — scores update daily from live platform data.
 
 ## Features
 
-- **Multi-Platform Scoring** — Aggregates stats from 4 platforms into a single score (max 4000)
+- **Multi-Platform Scoring** — Aggregates stats from 5 platforms into a single score (max 5000)
 - **Live Leaderboard** — Overall, year-wise, and branch-wise rankings with search, filters, and infinite scroll
 - **Platform Leaderboards** — Dedicated tabs with platform-specific stats (repos, stars, problems solved, ratings, etc.)
 - **Student Profiles** — Detailed breakdown, platform links, DiceBear avatars, score history chart, profile completeness
@@ -41,6 +41,7 @@ codeovertake/
 │   │   ├── leetcode.js           # LeetCode GraphQL (unofficial)
 │   │   ├── codeforces.js         # Codeforces official API
 │   │   ├── codechef.js           # CodeChef web scraping
+|   |   ├── gfg.js                # GeeksForGeeks JSON API
 │   │   └── index.js              # Platform registry
 │   ├── services/
 │   │   ├── studentService.js     # Registration, lookup, username updates
@@ -149,6 +150,8 @@ Each platform contributes up to **1000 points** (max total: 4000). Exponential c
 | **CodeChef** | Problems Solved | 500 | Exponential |
 | | Current Rating | 400 | Linear |
 | | Highest Rating | 100 | Linear |
+| **GeeksForGeeks** | Weighted Solved (Easy×1 + Med×3 + Hard×6) | 700 | Exponential |
+| | Practice Score | 300 | Linear |
 
 ## Data Update Pipeline
 
@@ -160,6 +163,7 @@ The update system uses **per-platform parallel streams** with rate-limit-aware c
 | LeetCode | 5 workers | 200ms | ~20-30 req/min |
 | Codeforces | 2 workers | 1000ms | ~1 req/2s |
 | CodeChef | 3 workers | 500ms | Conservative (scraping) |
+| GeeksForGeeks | 4 workers | 300ms | JSON API (no scraping) |
 
 All platforms fetch simultaneously. Total time ≈ slowest platform, not the sum.
 
