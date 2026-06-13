@@ -108,7 +108,7 @@ export interface AnalyticsOverview {
     latestSnapshotDate: string | null;
   };
   platformCoverage: Array<{
-    platform: "github" | "leetcode" | "codeforces" | "codechef";
+    platform: "github" | "leetcode" | "codeforces" | "codechef" | "gfg";
     linkedCount: number;
     linkedPercentage: number;
     averageScore: number;
@@ -124,6 +124,7 @@ export interface AnalyticsOverview {
     avgLeetcode: number;
     avgCodeforces: number;
     avgCodechef: number;
+    avgGfg: number;
     students: number;
   }>;
   topStudents: Array<{
@@ -141,6 +142,7 @@ export interface AnalyticsOverview {
     leetcode: { avgTotalSolved: number; avgEasySolved: number; avgMediumSolved: number; avgHardSolved: number; avgContestRating: number };
     codeforces: { avgRating: number; avgMaxRating: number; avgProblemsSolved: number };
     codechef: { avgCurrentRating: number; avgHighestRating: number; avgProblemsSolved: number };
+    gfg: { avgTotalSolved: number; avgEasySolved: number; avgMediumSolved: number; avgHardSolved: number; avgScore: number };
   };
   topPerPlatform: Array<{
     platform: string;
@@ -191,6 +193,7 @@ export async function lookupStudent(rollno: string) {
       leetcode?: string;
       codeforces?: string;
       codechef?: string;
+      gfg?: string;
     };
   }>(`/students/lookup/${encodeURIComponent(rollno)}`);
 }
@@ -204,6 +207,7 @@ export async function registerStudent(data: {
   leetcode?: string;
   codeforces?: string;
   codechef?: string;
+  gfg?: string;
 }) {
   return request<{ message: string; student: any }>("/students/register", {
     method: "POST",
@@ -217,7 +221,7 @@ export async function fetchStudent(rollno: string) {
 
 export async function updateUsernames(
   rollno: string,
-  usernames: { github?: string; leetcode?: string; codeforces?: string; codechef?: string }
+  usernames: { github?: string; leetcode?: string; codeforces?: string; codechef?: string; gfg?: string }
 ) {
   return request<{ message: string; student: any }>(`/students/${encodeURIComponent(rollno)}/usernames`, {
     method: "PUT",
@@ -237,7 +241,7 @@ export async function fetchStudentHistory(rollno: string, days = 30) {
     rollno: string;
     snapshots: Array<{
       date: string;
-      scores: { github: number; leetcode: number; codeforces: number; codechef: number; total: number };
+      scores: { github: number; leetcode: number; codeforces: number; codechef: number; gfg: number; total: number };
       ranks?: { overall: number; yearWise: number; branchWise: number };
     }>;
   }>(`/students/${encodeURIComponent(rollno)}/history?days=${days}`);

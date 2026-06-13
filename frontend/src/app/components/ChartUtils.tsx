@@ -5,6 +5,7 @@ export const platformColors: Record<string, string> = {
   leetcode: "#f59e0b",
   codeforces: "#60a5fa",
   codechef: "#a78bfa",
+  gfg: "#22c55e",
 };
 
 export const engagementColors = ["#FF8594", "#f59e0b", "#60a5fa", "#a78bfa", "#4ade80"];

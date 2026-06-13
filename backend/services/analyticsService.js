@@ -2,7 +2,7 @@ const Student = require('../models/Student');
 const Snapshot = require('../models/Snapshot');
 const AnalyticsCache = require('../models/AnalyticsCache');
 
-const PLATFORM_KEYS = ['github', 'leetcode', 'codeforces', 'codechef'];
+const PLATFORM_KEYS = ['github', 'leetcode', 'codeforces', 'codechef', 'gfg'];
 // Total score is out of 4000, so 500-point bands provide an easy-to-read distribution.
 // Upper bucket bounds are exclusive in MongoDB $bucket, so 4001 ensures score 4000 is included.
 const SCORE_BUCKETS = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4001];
@@ -15,6 +15,7 @@ const PLATFORM_AVERAGE_KEY = {
   leetcode: 'averageLeetcode',
   codeforces: 'averageCodeforces',
   codechef: 'averageCodechef',
+  gfg: 'averageGfg',
 };
 
 function round(value, digits = 2) {
@@ -129,6 +130,11 @@ async function _computeOverview() {
           codechef: {
             $sum: {
               $cond: [{ $and: [{ $ne: ['$codechef.username', null] }, { $ne: ['$codechef.username', ''] }] }, 1, 0],
+            },
+          },
+          gfg: {
+            $sum: {
+              $cond: [{ $and: [{ $ne: ['$gfg.username', null] }, { $ne: ['$gfg.username', ''] }] }, 1, 0],
             },
           },
         },
@@ -273,6 +279,19 @@ async function _computeOverview() {
               },
             },
           ],
+          gfg: [
+            { $match: { 'gfg.username': { $nin: ['', null] } } },
+            {
+              $group: {
+                _id: null,
+                avgTotalSolved: { $avg: '$gfg.stats.totalSolved' },
+                avgEasySolved: { $avg: '$gfg.stats.easySolved' },
+                avgMediumSolved: { $avg: '$gfg.stats.mediumSolved' },
+                avgHardSolved: { $avg: '$gfg.stats.hardSolved' },
+                avgScore: { $avg: '$gfg.stats.score' },
+              },
+            },
+          ],
         },
       },
     ]),
@@ -314,6 +333,7 @@ async function _computeOverview() {
             avgLeetcode: { $avg: '$scores.leetcode' },
             avgCodeforces: { $avg: '$scores.codeforces' },
             avgCodechef: { $avg: '$scores.codechef' },
+            avgGfg: { $avg: '$scores.gfg' },
             studentCount: { $sum: 1 },
           },
         },
@@ -368,6 +388,13 @@ async function _computeOverview() {
       avgHighestRating: round(rawStats.codechef?.[0]?.avgHighestRating || 0),
       avgProblemsSolved: round(rawStats.codechef?.[0]?.avgProblemsSolved || 0),
     },
+    gfg: {
+      avgTotalSolved: round(rawStats.gfg?.[0]?.avgTotalSolved || 0),
+      avgEasySolved: round(rawStats.gfg?.[0]?.avgEasySolved || 0),
+      avgMediumSolved: round(rawStats.gfg?.[0]?.avgMediumSolved || 0),
+      avgHardSolved: round(rawStats.gfg?.[0]?.avgHardSolved || 0),
+      avgScore: round(rawStats.gfg?.[0]?.avgScore || 0),
+    },
   };
 
   return {
@@ -412,6 +439,7 @@ async function _computeOverview() {
       avgLeetcode: round(item.avgLeetcode || 0),
       avgCodeforces: round(item.avgCodeforces || 0),
       avgCodechef: round(item.avgCodechef || 0),
+      avgGfg: round(item.avgGfg || 0),
       students: item.studentCount || 0,
     })),
     topStudents: topStudents.map((student) => ({

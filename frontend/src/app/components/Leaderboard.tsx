@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router";
 import { Search, Rocket, Zap, TrendingUp, ArrowUpRight, Loader2, ArrowUpDown, ArrowUp, ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import { platforms, type Platform } from "../mockData";
 import { fetchLeaderboard, fetchPlatformLeaderboard, fetchFilters, fetchTopGainers } from "../api";
-import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon } from "./PlatformIcons";
+import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon, GfgIcon } from "./PlatformIcons";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -33,6 +33,13 @@ const platformColumns: Record<string, { label: string; statKey: string; getValue
     { label: "Max Rating", statKey: "codechef.stats.highestRating", getValue: (s) => s.codechef?.stats?.highestRating ?? 0 },
     { label: "Stars", statKey: "codechef.stats.stars", getValue: (s) => s.codechef?.stats?.stars ?? 0 },
     { label: "Solved", statKey: "codechef.stats.totalProblemsSolved", getValue: (s) => s.codechef?.stats?.totalProblemsSolved ?? 0 },
+  ],
+  gfg: [
+    { label: "Score", statKey: "gfg.stats.score", getValue: (s) => s.gfg?.stats?.score ?? 0 },
+    { label: "Easy", statKey: "gfg.stats.easySolved", getValue: (s) => s.gfg?.stats?.easySolved ?? 0 },
+    { label: "Medium", statKey: "gfg.stats.mediumSolved", getValue: (s) => s.gfg?.stats?.mediumSolved ?? 0 },
+    { label: "Hard", statKey: "gfg.stats.hardSolved", getValue: (s) => s.gfg?.stats?.hardSolved ?? 0 },
+    { label: "Total", statKey: "gfg.stats.totalSolved", getValue: (s) => s.gfg?.stats?.totalSolved ?? 0 },
   ],
 };
 
@@ -201,6 +208,8 @@ export function Leaderboard() {
         return <CodeforcesIcon />;
       case "codechef":
         return <CodechefIcon />;
+      case "gfg":
+        return <GfgIcon />;
     }
   };
 
@@ -449,7 +458,7 @@ export function Leaderboard() {
                   </div>
                 </div>
                 {displayTab === "all" && (
-                  <div className="mt-3 grid grid-cols-4 gap-2 border-t border-[#1e1e1e] pt-3">
+                  <div className="mt-3 grid grid-cols-5 gap-2 border-t border-[#1e1e1e] pt-3">
                     {platforms.map((p) => (
                       <div key={p} className="text-center">
                         <div className="mx-auto mb-1 h-3.5 w-3.5 text-[#888888]">{getPlatformIcon(p)}</div>
@@ -514,6 +523,7 @@ export function Leaderboard() {
                 <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-[#888888]">LeetCode</th>
                 <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-[#888888]">Codeforces</th>
                 <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-[#888888]">CodeChef</th>
+                <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-[#888888]">GFG</th>
                 <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-[#888888]">Total</th>
               </tr>
             ) : (
@@ -533,13 +543,13 @@ export function Leaderboard() {
           <tbody className="divide-y divide-[#1e1e1e] font-['Archivo']">
             {initialLoad ? (
               <tr>
-                <td colSpan={10} className="px-4 py-8 text-center text-[#888888]">
+                  <td colSpan={11} className="px-4 py-8 text-center text-[#888888]">
                   Loading...
                 </td>
               </tr>
             ) : students.length === 0 ? (
               <tr>
-                <td colSpan={10} className="px-4 py-8 text-center">
+                <td colSpan={11} className="px-4 py-8 text-center">
                   <div className="space-y-3">
                     <div className="text-[#888888]">No students found</div>
                     {searchQuery && (
@@ -602,6 +612,9 @@ export function Leaderboard() {
                         </td>
                         <td className="px-4 py-3 font-['JetBrains_Mono']">
                           {student.scores?.codechef ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 font-['JetBrains_Mono']">
+                          {student.scores?.gfg ?? "—"}
                         </td>
                         <td className="px-4 py-3 font-['JetBrains_Mono'] text-[#4ade80]">{student.scores?.total ?? 0}</td>
                       </>

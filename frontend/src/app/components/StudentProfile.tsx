@@ -4,7 +4,7 @@ import { ArrowLeft, Edit3, X, Save, History, Clock, Share2, Plus, UserPlus, Trop
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { platforms, type Platform } from "../mockData";
 import { fetchStudent, fetchStudentHistory, updateUsernames as apiUpdateUsernames, restoreUsernames as apiRestoreUsernames, fetchHeatmap, validatePlatformUsername, fetchStudentResults, type StudentResults } from "../api";
-import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon } from "./PlatformIcons";
+import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon, GfgIcon } from "./PlatformIcons";
 import { Heatmap, CombinedHeatmap } from "./Heatmap";
 import { platformColors, CustomChartTooltip, useChartFocus, formatChartDate } from "./ChartUtils";
 
@@ -28,6 +28,7 @@ export function StudentProfile() {
     leetcode: "",
     codeforces: "",
     codechef: "",
+    gfg: "",
   });
   const { 
     activeLine: activeScoreLine, 
@@ -99,6 +100,7 @@ export function StudentProfile() {
           leetcode: "",
           codeforces: "",
           codechef: "",
+          gfg: "",
         });
         // Calculate cooldown
         if (data.lastEditedAt) {
@@ -129,6 +131,7 @@ export function StudentProfile() {
             leetcode: s.scores?.leetcode ?? 0,
             codeforces: s.scores?.codeforces ?? 0,
             codechef: s.scores?.codechef ?? 0,
+            gfg: s.scores?.gfg ?? 0,
             rankOverall: s.ranks?.overall ?? null,
             rankYear: s.ranks?.yearWise ?? null,
             rankBranch: s.ranks?.branchWise ?? null,
@@ -191,6 +194,8 @@ export function StudentProfile() {
         return <CodeforcesIcon />;
       case "codechef":
         return <CodechefIcon />;
+      case "gfg":
+        return <GfgIcon />;
     }
   };
 
@@ -204,6 +209,8 @@ export function StudentProfile() {
         return "https://codeforces.com/profile/";
       case "codechef":
         return "https://www.codechef.com/users/";
+      case "gfg":
+        return "https://auth.geeksforgeeks.org/user/";
     }
   };
 
@@ -261,6 +268,7 @@ export function StudentProfile() {
         leetcode: "",
         codeforces: "",
         codechef: "",
+        gfg: "",
       });
       setShowHistory(false);
       setEditCooldown(24);
@@ -540,6 +548,38 @@ export function StudentProfile() {
                         )}
                       </>
                     )}
+                    {platform === "gfg" && data && (
+                      <>
+                        <div>
+                          <div className="text-[#666666]">Total Solved</div>
+                          <div className="font-['JetBrains_Mono']">{data.totalSolved ?? 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#666666]">Easy</div>
+                          <div className="font-['JetBrains_Mono']">{data.easySolved ?? 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#666666]">Medium</div>
+                          <div className="font-['JetBrains_Mono']">{data.mediumSolved ?? 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#666666]">Hard</div>
+                          <div className="font-['JetBrains_Mono']">{data.hardSolved ?? 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#666666]">Monthly Score</div>
+                          <div className="font-['JetBrains_Mono']">{data.monthlyScore ?? 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#666666]">Institute Rank</div>
+                          <div className="font-['JetBrains_Mono']">{data.instituteRank ?? 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#666666]">Streak</div>
+                          <div className="font-['JetBrains_Mono']">{data.streak ?? 0}</div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -777,6 +817,7 @@ export function StudentProfile() {
                     leetcode: "",
                     codeforces: "",
                     codechef: "",
+                    gfg: "",
                   });
                 }}
                 className="flex h-10 items-center gap-2 rounded border border-[#1e1e1e] px-4 text-sm text-[#888888] transition-colors hover:text-white"
@@ -920,6 +961,17 @@ export function StudentProfile() {
                   dot={false}
                   activeDot={(!activeScoreLine || activeScoreLine === "codechef") ? { r: 3 } : false}
                   strokeOpacity={activeScoreLine && activeScoreLine !== "codechef" ? 0.1 : 1}
+                  style={{ transition: "stroke-opacity 0.2s ease-in-out" }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="gfg"
+                  stroke={platformColors.gfg}
+                  strokeWidth={1.5}
+                  name="GFG"
+                  dot={false}
+                  activeDot={(!activeScoreLine || activeScoreLine === "gfg") ? { r: 3 } : false}
+                  strokeOpacity={activeScoreLine && activeScoreLine !== "gfg" ? 0.1 : 1}
                   style={{ transition: "stroke-opacity 0.2s ease-in-out" }}
                 />
               </LineChart>

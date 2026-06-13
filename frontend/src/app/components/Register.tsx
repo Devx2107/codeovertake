@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router";
 import { AlertCircle, ArrowLeft, Search, UserPlus, Eye, Trophy, GitBranch, BarChart3, Users, CheckCircle2, XCircle, Loader2, Zap, Flame, Target, ChevronDown } from "lucide-react";
 import { platforms, type Platform } from "../mockData";
 import { searchStudents as apiSearchStudents, registerStudent as apiRegisterStudent, validatePlatformUsername } from "../api";
-import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon } from "./PlatformIcons";
+import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon, GfgIcon } from "./PlatformIcons";
 
 type Step = "search" | "form";
 
@@ -16,6 +16,7 @@ interface FormData {
   leetcode: string;
   codeforces: string;
   codechef: string;
+  gfg: string;
 }
 
 interface SearchResult {
@@ -43,6 +44,7 @@ export function Register() {
     leetcode: "",
     codeforces: "",
     codechef: "",
+    gfg: "",
   });
   const [autoFilled, setAutoFilled] = useState(false);
   const [successData, setSuccessData] = useState<{ rollno: string; name: string; ranks: any; scores: any } | null>(null);
@@ -143,6 +145,7 @@ export function Register() {
         leetcode: "",
         codeforces: "",
         codechef: "",
+        gfg: "",
       });
       setAutoFilled(true);
       setStep("form");
@@ -159,6 +162,7 @@ export function Register() {
       leetcode: "",
       codeforces: "",
       codechef: "",
+      gfg: "",
     });
     setAutoFilled(false);
     setStep("form");
@@ -171,11 +175,12 @@ export function Register() {
         name: "",
         branch: "",
         year: "",
-        github: "",
-        leetcode: "",
-        codeforces: "",
-        codechef: "",
-      });
+      github: "",
+      leetcode: "",
+      codeforces: "",
+      codechef: "",
+      gfg: "",
+    });
       setAutoFilled(false);
       setStep("form");
     }
@@ -197,6 +202,7 @@ export function Register() {
         leetcode: formData.leetcode || undefined,
         codeforces: formData.codeforces || undefined,
         codechef: formData.codechef || undefined,
+        gfg: formData.gfg || undefined,
       });
       setIsSubmitting(false);
       setSuccessData({
@@ -229,6 +235,8 @@ export function Register() {
         return <CodeforcesIcon />;
       case "codechef":
         return <CodechefIcon />;
+      case "gfg":
+        return <GfgIcon />;
     }
   };
 
@@ -242,6 +250,8 @@ export function Register() {
         return "https://codeforces.com/profile/";
       case "codechef":
         return "https://www.codechef.com/users/";
+      case "gfg":
+        return "https://auth.geeksforgeeks.org/user/";
     }
   };
 
@@ -310,7 +320,7 @@ export function Register() {
       {step === "search" ? (
         <div>
           <h1 className="mb-2 font-['JetBrains_Mono'] text-2xl tracking-tight sm:text-3xl">Claim Your<span className="text-[#4ade80]"> Spot</span></h1>
-          <p className="mb-6 text-sm text-[#666666] sm:mb-8">Find yourself and get ranked across 4 coding platforms</p>
+          <p className="mb-6 text-sm text-[#666666] sm:mb-8">Find yourself and get ranked across 5 coding platforms</p>
 
           <div className="space-y-6">
             <div>
@@ -427,12 +437,13 @@ export function Register() {
                 {/* Supported platforms */}
                 <div>
                   <h2 className="mb-3 font-['JetBrains_Mono'] text-sm uppercase tracking-wider text-[#888888]">Supported Platforms</h2>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
                     {[
                       { icon: <GithubIcon />, name: "GitHub", desc: "Contributions" },
                       { icon: <LeetcodeIcon />, name: "LeetCode", desc: "Problems solved" },
                       { icon: <CodeforcesIcon />, name: "Codeforces", desc: "Rating" },
                       { icon: <CodechefIcon />, name: "CodeChef", desc: "Rating" },
+                      { icon: <GfgIcon />, name: "GFG", desc: "Problems solved" },
                     ].map((p) => (
                       <div key={p.name} className="flex items-center gap-3 rounded border border-[#1e1e1e] bg-[#111111] p-3">
                         <span className="h-5 w-5 flex-shrink-0">{p.icon}</span>
@@ -682,6 +693,15 @@ export function Register() {
                               <span className="text-xs text-[#888888]">Max: <span className="text-white">{validation.stats.maxRating}</span></span>
                               <span className="text-xs text-[#888888]">Rank: <span className="text-white">{validation.stats.rank}</span></span>
                               <span className="text-xs text-[#888888]">Solved: <span className="text-white">{validation.stats.problemsSolved}</span></span>
+                            </>
+                          )}
+                          {platform === "gfg" && (
+                            <>
+                              <span className="text-xs text-[#888888]">Total: <span className="text-white">{validation.stats.totalSolved}</span></span>
+                              <span className="text-xs text-[#888888]">Easy: <span className="text-white">{validation.stats.easySolved}</span></span>
+                              <span className="text-xs text-[#888888]">Medium: <span className="text-white">{validation.stats.mediumSolved}</span></span>
+                              <span className="text-xs text-[#888888]">Hard: <span className="text-white">{validation.stats.hardSolved}</span></span>
+                              <span className="text-xs text-[#888888]">Score: <span className="text-white">{validation.stats.score}</span></span>
                             </>
                           )}
                           {platform === "codechef" && (

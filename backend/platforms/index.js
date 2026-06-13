@@ -16,8 +16,9 @@ const github = require('./github');
 const leetcode = require('./leetcode');
 const codeforces = require('./codeforces');
 const codechef = require('./codechef');
+const gfg = require('./gfg');
 
-const platforms = [github, leetcode, codeforces, codechef];
+const platforms = [github, leetcode, codeforces, codechef, gfg];
 
 // Map by key for fast lookup
 const platformMap = {};

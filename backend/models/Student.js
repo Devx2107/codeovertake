@@ -69,11 +69,27 @@ const studentSchema = new mongoose.Schema({
     lastUpdated: Date,
   },
 
+  gfg: {
+    username: { type: String, default: '', trim: true },
+    stats: {
+      totalSolved: { type: Number, default: 0 },
+      easySolved: { type: Number, default: 0 },
+      mediumSolved: { type: Number, default: 0 },
+      hardSolved: { type: Number, default: 0 },
+      score: { type: Number, default: 0 },
+      monthlyScore: { type: Number, default: 0 },
+      instituteRank: { type: Number, default: 0 },
+      streak: { type: Number, default: 0 },
+    },
+    lastUpdated: Date,
+  },
+
   scores: {
     github: { type: Number, default: 0 },
     leetcode: { type: Number, default: 0 },
     codeforces: { type: Number, default: 0 },
     codechef: { type: Number, default: 0 },
+    gfg: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
   },
 
@@ -85,6 +101,7 @@ const studentSchema = new mongoose.Schema({
     leetcode: { type: Number, default: 0 },
     codeforces: { type: Number, default: 0 },
     codechef: { type: Number, default: 0 },
+    gfg: { type: Number, default: 0 },
   },
 
   heatmap: {

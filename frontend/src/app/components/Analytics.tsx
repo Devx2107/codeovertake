@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { Activity, BarChart3, Calendar, Crown, Hash, Info, Link2, Target, Trophy, TrendingUp, Users } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, CartesianGrid, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { fetchAnalyticsOverview, fetchAnalyticsDates, type AnalyticsOverview } from "../api";
-import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon } from "./PlatformIcons";
+import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon, GfgIcon } from "./PlatformIcons";
 import { platformColors, engagementColors, CustomChartTooltip, useChartFocus, formatChartDate } from "./ChartUtils";
 
 const platformIcons: Record<string, React.ReactNode> = {
@@ -11,6 +11,7 @@ const platformIcons: Record<string, React.ReactNode> = {
   leetcode: <span className="inline-block h-4 w-4"><LeetcodeIcon /></span>,
   codeforces: <span className="inline-block h-4 w-4"><CodeforcesIcon /></span>,
   codechef: <span className="inline-block h-4 w-4"><CodechefIcon /></span>,
+  gfg: <span className="inline-block h-4 w-4"><GfgIcon /></span>,
 };
 
 const pieColors = ["#4ade80", "#22c55e", "#16a34a", "#15803d", "#14532d", "#84cc16"];
@@ -137,6 +138,17 @@ export function Analytics() {
         { label: "Avg Rating", value: data.platformStatAverages.codechef.avgCurrentRating },
         { label: "Avg Max Rating", value: data.platformStatAverages.codechef.avgHighestRating },
         { label: "Avg Solved", value: data.platformStatAverages.codechef.avgProblemsSolved },
+      ],
+    },
+    {
+      platform: "gfg",
+      label: "GFG",
+      stats: [
+        { label: "Avg Solved", value: data.platformStatAverages.gfg.avgTotalSolved },
+        { label: "Avg Easy", value: data.platformStatAverages.gfg.avgEasySolved },
+        { label: "Avg Medium", value: data.platformStatAverages.gfg.avgMediumSolved },
+        { label: "Avg Hard", value: data.platformStatAverages.gfg.avgHardSolved },
+        { label: "Avg Score", value: data.platformStatAverages.gfg.avgScore },
       ],
     },
   ];
@@ -295,6 +307,18 @@ export function Analytics() {
                   name="Avg CodeChef"
                   strokeDasharray="4 2"
                   strokeOpacity={activeTrendLine && activeTrendLine !== "avgCodechef" ? 0.1 : 1}
+                  style={{ transition: "stroke-opacity 0.2s ease-in-out" }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="avgGfg"
+                  stroke={platformColors.gfg}
+                  strokeWidth={1}
+                  dot={false}
+                  activeDot={(!activeTrendLine || activeTrendLine === "avgGfg") ? { r: 3 } : false}
+                  name="Avg GFG"
+                  strokeDasharray="4 2"
+                  strokeOpacity={activeTrendLine && activeTrendLine !== "avgGfg" ? 0.1 : 1}
                   style={{ transition: "stroke-opacity 0.2s ease-in-out" }}
                 />
               </LineChart>

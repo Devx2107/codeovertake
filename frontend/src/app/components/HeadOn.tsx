@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router";
 import { Search, X, Plus, Trophy, Minus, Crown } from "lucide-react";
 import { searchStudents, fetchStudent, fetchHeatmap } from "../api";
-import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon } from "./PlatformIcons";
+import { GithubIcon, LeetcodeIcon, CodeforcesIcon, CodechefIcon, GfgIcon } from "./PlatformIcons";
 import { CombinedHeatmap } from "./Heatmap";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -94,6 +94,18 @@ const PLATFORM_CONFIGS = [
       { label: "Max Rating", get: (s: any) => s.codechef?.stats?.highestRating ?? 0 },
       { label: "Stars", get: (s: any) => s.codechef?.stats?.stars ?? 0 },
       { label: "Problems Solved", get: (s: any) => s.codechef?.stats?.totalProblemsSolved ?? 0 },
+    ],
+  },
+  {
+    key: "gfg",
+    label: "GFG",
+    icon: <GfgIcon />,
+    stats: [
+      { label: "Total Solved", get: (s: any) => s.gfg?.stats?.totalSolved ?? 0 },
+      { label: "Easy", get: (s: any) => s.gfg?.stats?.easySolved ?? 0 },
+      { label: "Medium", get: (s: any) => s.gfg?.stats?.mediumSolved ?? 0 },
+      { label: "Hard", get: (s: any) => s.gfg?.stats?.hardSolved ?? 0 },
+      { label: "Score", get: (s: any) => s.gfg?.stats?.score ?? 0 },
     ],
   },
 ];

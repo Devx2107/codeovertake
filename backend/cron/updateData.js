@@ -15,6 +15,7 @@ const PLATFORM_CONCURRENCY = {
   leetcode: 5,
   codeforces: 2,
   codechef: 3,
+  gfg: 4,
 };
 
 const PLATFORM_DELAY_MS = {
@@ -22,6 +23,7 @@ const PLATFORM_DELAY_MS = {
   leetcode: 200,
   codeforces: 1000,
   codechef: 500,
+  gfg: 300,
 };
 
 const SAVE_BATCH_SIZE = 50;

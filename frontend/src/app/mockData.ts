@@ -39,6 +39,14 @@ export interface Student {
       countryRank?: number;
       score: number;
     };
+    gfg?: {
+      username: string;
+      easy: number;
+      medium: number;
+      hard: number;
+      total: number;
+      score: number;
+    };
   };
   totalScore: number;
   overallRank: number;
@@ -51,6 +59,7 @@ export interface Student {
     leetcode: number;
     codeforces: number;
     codechef: number;
+    gfg?: number;
   }>;
   usernameHistory?: Array<{
     timestamp: string;
@@ -60,6 +69,7 @@ export interface Student {
       leetcode?: string;
       codeforces?: string;
       codechef?: string;
+      gfg?: string;
     };
   }>;
 }
@@ -334,5 +344,5 @@ export const mockStudents: Student[] = [
 
 export const branches = ["CSE", "ECE", "IT"];
 export const years = [2022, 2023, 2024];
-export const platforms = ["github", "leetcode", "codeforces", "codechef"] as const;
+export const platforms = ["github", "leetcode", "codeforces", "codechef", "gfg"] as const;
 export type Platform = typeof platforms[number];

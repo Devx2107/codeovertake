@@ -33,3 +33,15 @@ export function CodechefIcon() {
     </svg>
   );
 }
+
+export function GfgIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-full w-full">
+      <rect x="2" y="2" width="20" height="20" rx="5" fill="#0f5132" />
+      <path
+        d="M8.6 12.1c0-2 1.5-3.7 3.7-3.7 1 0 1.9.3 2.6.9l-1 1.2c-.5-.4-1.1-.6-1.7-.6-1.1 0-1.9.8-1.9 2.2 0 1.3.8 2.2 2 2.2.9 0 1.6-.4 1.8-1.1h-2v-1.4h4v.4c0 2.3-1.5 4.1-3.9 4.1-2.3 0-3.6-1.8-3.6-4.1Z"
+        fill="#ffffff"
+      />
+    </svg>
+  );
+}
